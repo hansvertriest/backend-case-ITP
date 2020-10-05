@@ -1,3 +1,8 @@
+export type invalidInputError = {
+  invalidFrameCount?: number;
+  frameLengthErrors:string[];
+}
+
 export type Frame = [number, number];
 
 export type LastFrame = [number, number, number];
