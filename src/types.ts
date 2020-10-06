@@ -1,5 +1,5 @@
 export type invalidInputError = {
-  invalidFrameCount?: number;
+  invalidFrameCount?: string;
   frameLengthErrors:string[];
 }
 
