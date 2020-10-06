@@ -1,6 +1,8 @@
 import http from "http";
 import express from "express";
 import { compute } from "./compute";
+import { db } from './db';
+import { uuid } from 'uuidv4';
 
 import { invalidInputError } from './types';
 
@@ -43,8 +45,36 @@ app.post("/compute", (request, response) => {
 
   const score = compute(game);
 
+  // save score to DB
+  const sql = "INSERT INTO games (id, score) VALUES (?)";
+  const id = uuid();
+  const values = [id,score]
+
+  db.query(sql, [values], function(err, data, fields) {
+    if (err) throw err;
+  })
+
   // TODO: Return response
-  return response.status(200).json({score});
+  return response.status(200).json({score, id});
+});
+
+
+app.get("/history", async (request, response) => {
+
+  const id = request.query.game;
+  console.log(id);
+  // get Object from database
+  const sql = `SELECT * FROM games WHERE id = '${id}'`;
+
+  let result;
+
+  const score = await db.query(sql, [], function(err, data, fields) {
+    if (err) throw err;
+    result = data[0];
+    return response.status(200).json(result);
+  })
+
+  
 });
 
 export const createServer = () => http.createServer(app);
